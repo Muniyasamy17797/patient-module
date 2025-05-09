@@ -1,0 +1,133 @@
+package com.patient.module.adoptor.in.api;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.patient.module.domain.dto.PagedResponse;
+import com.patient.module.domain.dto.PatientData;
+import com.patient.module.domain.dto.PatientRequest;
+import com.patient.module.domain.port.PatientUseCase;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
+@RestController
+@RequestMapping("/api/v1/patients")
+public class PatientController {
+    
+    @Autowired
+    private  PatientUseCase service;
+    /**
+     * Creates a new patient.
+     *
+     * @param request the patient request containing patient details
+     * @return the created patient information
+     */
+    @Operation(summary = "Create a new patient", description = "Creates a new patient record in the system.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Patient created successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid patient request"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @PostMapping
+    public PatientData create(@RequestBody PatientRequest request) {
+        return service.create(request);
+    }
+
+    /**
+     * Updates an existing patient.
+     *
+     * @param id      the ID of the patient to update
+     * @param request the patient request containing updated details
+     * @return the updated patient information
+     */
+    @Operation(summary = "Update an existing patient", description = "Updates the details of an existing patient.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Patient updated successfully"),
+        @ApiResponse(responseCode = "404", description = "Patient not found"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @PutMapping("/{id}")
+    public PatientData update(@PathVariable Long id, @RequestBody PatientRequest request) {
+        return service.update(id, request);
+    }
+
+    /**
+     * Retrieves a patient by ID.
+     *
+     * @param id the ID of the patient to retrieve
+     * @return the patient information
+     */
+    @Operation(summary = "Get a patient by ID", description = "Retrieves the details of a patient by their ID.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Patient retrieved successfully"),
+        @ApiResponse(responseCode = "404", description = "Patient not found"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/{id}")
+    public PatientData getById(@PathVariable Long id) {
+        return service.getById(id);
+    }
+
+    /**
+     * Retrieves all patients.
+     *
+     * @return a list of all patients
+     */
+    @Operation(summary = "Get all patients", description = "Retrieves a list of all patients.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Patients retrieved successfully"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping
+    public List<PatientData> getAll() {
+        return service.getAll();
+    }
+
+    /**
+     * Retrieves all patients in a paginated format.
+     *
+     * @param pageable the pagination information
+     * @return a paginated list of patients
+     */
+    @Operation(summary = "Get all patients (paginated)", description = "Retrieves a paginated list of all patients.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Patients retrieved successfully"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+
+    @GetMapping("/paged")
+    public ResponseEntity<PagedResponse<PatientData>> getAllPaged(
+        @RequestParam(defaultValue = "0") int offset,
+        @RequestParam(defaultValue = "10") int limit) {
+        return ResponseEntity.ok(service.getAllPaged(offset, limit));
+    }
+
+    /**
+     * Deletes a patient by ID.
+     *
+     * @param id the ID of the patient to delete
+     */
+    @Operation(summary = "Delete a patient by ID", description = "Deletes a patient record by their ID.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Patient deleted successfully"),
+        @ApiResponse(responseCode = "404", description = "Patient not found"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
+    }
+}
