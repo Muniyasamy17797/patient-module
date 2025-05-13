@@ -3,20 +3,26 @@ spring:
     activate:
       on-profile: dev
   
-  datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    url:  jdbc:mysql://localhost:3307/microProject?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: microProject
-    password: microProject
-    hikari:
-      pool-name: Hikari
-      auto-commit: false
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8081/realms/myrealm
+  
+  # datasource:
+  #   type: com.zaxxer.hikari.HikariDataSource
+  #   url:  jdbc:mysql://localhost:3307/microProject?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+  #   username: microProject
+  #   password: microProject
+  #   hikari:
+  #     pool-name: Hikari
+  #     auto-commit: false
+  # jpa:
+  #   hibernate:
+  #     ddl-auto: update
+  #   properties:
+  #     hibernate:
+  #       dialect: org.hibernate.dialect.MySQL8Dialect
   
   cloud:
     consul:
@@ -34,6 +40,11 @@ spring:
           - git-branch=${git.branch:}
       host: localhost
       port: 8500
+  cache:
+    type: redis
+  redis:
+    host: localhost
+    port: 6379
 
   liquibase:
     enabled: false   
@@ -50,8 +61,28 @@ management:
 logging:
   level:
     root: INFO
+    org.springframework.cloud.config.client: DEBUG
+    org.springframework.cloud.vault: DEBUG
 server:
   port: 8100
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    # url: http://localhost:8090/v3/api-docs
+    path: /swagger-ui.html
+    oauth2-redirect-url: http://localhost:8090/swagger-ui/oauth2-redirect.html
+    oauth:
+      client-id: ${swagger-ui.oauth.client-id}
+      client-secret: ${swagger-ui.oauth.client-secret}
+      authorization-url: ${swagger-ui.oauth.authorization-url}
+      token-url: ${swagger-ui.oauth.token-url}
+      scope: ${swagger-ui.oauth.scope}
+
+
+jwt:
+  secret: 4a7f1a9c4a3f4d7a8fbc7d6f25d9918b6d7cdd2ef9e3c3c512e1ef98d9ff2d60
 
 
 
