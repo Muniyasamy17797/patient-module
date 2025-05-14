@@ -64,7 +64,7 @@ logging:
     org.springframework.cloud.config.client: DEBUG
     org.springframework.cloud.vault: DEBUG
 server:
-  port: 8100
+  port: 8101
 
 springdoc:
   api-docs:
