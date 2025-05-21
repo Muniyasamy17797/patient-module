@@ -297,6 +297,7 @@
   </dependencies>
 
     <build>
+    <finalName>patientmodule</finalName>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
